@@ -1,5 +1,6 @@
 import { createContext } from 'react'
 import { ThemeProvider } from 'styled-components'
+import Roulette from './games/Roulette/Roulette'
 import { RootStore, store } from './store/RootStore'
 import { theme } from './Theme'
 
@@ -11,7 +12,7 @@ const App = () => {
   return (
     <StoreContext.Provider value={{ store }}>
       <ThemeProvider theme={theme}>
-        <div>Test</div>
+        <Roulette />
       </ThemeProvider>
     </StoreContext.Provider>
   )

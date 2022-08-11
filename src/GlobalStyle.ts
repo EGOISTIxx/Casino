@@ -9,6 +9,7 @@ export const GlobalStyle = createGlobalStyle`
   line-height: 24px;
   font-weight: 400;
   color: #000000;
+  width: 100vw;
 }
 
 body {
