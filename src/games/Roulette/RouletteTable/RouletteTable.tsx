@@ -1,4 +1,6 @@
 import React, { useMemo } from 'react'
+import { nanoid } from 'nanoid'
+import { ROULETTE_NUMBERS } from '../constants'
 import {
   InnerBetNumbers,
   InnerNumbersWrapper,
@@ -8,48 +10,25 @@ import {
 } from './SRouletteTable'
 
 const RouletteTable = () => {
-  const innerNumbers = useMemo(() => {
-    const matrixArray = [...Array(36)]
-      .map((_, index) => ++index)
-      .map((_, index, sourcedArray) =>
-        sourcedArray
-          .slice(index * 3, index * 3 + 3)
-          .reverse()
-      )
-      .slice(0, 12)
-      .map((_, index, sourcedArray) =>
-        sourcedArray.slice(index * 4, index * 4 + 4)
-      )
-      .slice(0, 3)
-
-    return matrixArray.map((matrix, _) =>
-      matrix
-        .map((col, i) => matrix.map((row) => row[i]))
-        .splice(0, 3)
-    )
-  }, [])
-
   return (
     <RouletteTableWrapper>
       <OuterBlock>0</OuterBlock>
       <InnerNumbersWrapper>
-        {innerNumbers.map((numberPart) => {
-          return (
-            <NumbersBetPart>
-              {numberPart.map((thirdPart) => {
-                return (
-                  <>
-                    {thirdPart.map((number) => (
-                      <InnerBetNumbers>
-                        {number}
-                      </InnerBetNumbers>
-                    ))}
-                  </>
-                )
-              })}
-            </NumbersBetPart>
+        {ROULETTE_NUMBERS.map((thirdPart) =>
+          thirdPart.sort(
+            (a, b) => a.betTableOrder - b.betTableOrder
           )
-        })}
+        ).map((thirdPart) => (
+          <NumbersBetPart key={nanoid()}>
+            {thirdPart.map((partNumbers) => (
+              <InnerBetNumbers
+                key={partNumbers.betTableOrder}
+                color={partNumbers.color}>
+                {partNumbers.number}
+              </InnerBetNumbers>
+            ))}
+          </NumbersBetPart>
+        ))}
       </InnerNumbersWrapper>
       <OuterBlock>2 to 1</OuterBlock>
       <OuterBlock>2 to 1</OuterBlock>

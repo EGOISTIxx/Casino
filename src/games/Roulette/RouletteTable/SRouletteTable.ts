@@ -92,6 +92,7 @@ export const InnerBetNumbers = styled.div`
   justify-content: center;
   font-weight: 800;
   font-size: 1.25rem;
+  background: ${props => props.color};
 `
 
 export const NumbersBetPart = styled.div`
