@@ -24,6 +24,13 @@ export const OuterBlock = styled.div`
   justify-content: center;
   font-weight: 800;
   font-size: 1.25rem;
+  user-select: none;
+  cursor: pointer;
+  transition: ease-in-out 0.5s;
+
+  &:hover {
+    box-shadow: 0px 0px 10px 2px #ffeaa7 inset;
+  }
 
   &:nth-child(1) {
     grid-row: 1 / 4;
@@ -72,6 +79,7 @@ export const OuterBlock = styled.div`
   &:nth-child(10),
   &:nth-child(11),
   &:nth-child(18) {
+    pointer-events: none;
     border: none;
   }
 `
@@ -92,7 +100,14 @@ export const InnerBetNumbers = styled.div`
   justify-content: center;
   font-weight: 800;
   font-size: 1.25rem;
-  background: ${props => props.color};
+  background: ${(props) => props.color};
+  user-select: none;
+  cursor: pointer;
+  transition: ease-in-out 0.5s;
+
+  &:hover {
+    box-shadow: 0px 0px 10px 2px #ffeaa7 inset;
+  }
 `
 
 export const NumbersBetPart = styled.div`
