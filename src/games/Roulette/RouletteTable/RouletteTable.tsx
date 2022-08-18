@@ -2,11 +2,12 @@ import React, {
   useCallback,
   useMemo,
   useState,
+  memo,
 } from 'react'
 import { nanoid } from 'nanoid'
 import { ROULETTE_NUMBERS } from '../constants'
 import {
-  InnerBetNumbers,
+  InnerBetNumber,
   InnerNumbersWrapper,
   NumbersBetPart,
   OuterBlock,
@@ -17,7 +18,15 @@ import { getNumbersByColor } from '../../../helpers/Roulette/getNumbersByColor'
 
 const RouletteTable = () => {
   const [bets, setBets] = useState<
-    { betNumber: number | number[] | undefined }[]
+    {
+      betNumber: number | number[] | undefined
+      currentBet: number
+    }[]
+  >([])
+
+  const [userBet, setUserBet] = useState(100)
+  const [activeBetNumbers, setActiveBetNumbers] = useState<
+    number[] | undefined
   >([])
 
   const betTableItems = useMemo(
@@ -46,14 +55,14 @@ const RouletteTable = () => {
         includedNumber: getIncludedNumbers(12).getNumbers(),
       },
       {
-        title: '2st. 12',
+        title: '2nd. 12',
         includedNumber: getIncludedNumbers(
           12,
           13
         ).getNumbers(),
       },
       {
-        title: '3st. 12',
+        title: '3rd. 12',
         includedNumber: getIncludedNumbers(
           12,
           25
@@ -100,21 +109,41 @@ const RouletteTable = () => {
   )
 
   const handleClickBet = useCallback(
-    (number: number | number[] | undefined) => {
-      setBets((prevValue) => [
-        ...prevValue,
-        { betNumber: number },
-      ])
+    (
+      number: number | number[] | undefined,
+      bet: number
+    ) => {
+      setBets((prevValue) => {
+        if (
+          prevValue.some(
+            (elem) => elem.betNumber === number
+          )
+        ) {
+          return prevValue.map((elem) =>
+            elem.betNumber === number
+              ? {
+                  betNumber: elem.betNumber,
+                  currentBet: elem.currentBet + bet,
+                }
+              : elem
+          )
+        }
+
+        return [
+          ...prevValue,
+          { betNumber: number, currentBet: bet },
+        ]
+      })
     },
-    [bets]
+    []
   )
 
-  // console.log(betTableItems)
-  // console.log(bets)
+  console.log(activeBetNumbers)
 
   return (
     <RouletteTableWrapper>
-      <OuterBlock onClick={() => handleClickBet(0)}>
+      <OuterBlock
+        onClick={() => handleClickBet(0, userBet)}>
         0
       </OuterBlock>
       <InnerNumbersWrapper>
@@ -124,16 +153,23 @@ const RouletteTable = () => {
           )
         ).map((thirdPart) => (
           <NumbersBetPart key={nanoid()}>
-            {thirdPart.map((partNumbers) => (
-              <InnerBetNumbers
-                key={partNumbers.betTableOrder}
-                color={partNumbers.color}
-                onClick={() =>
-                  handleClickBet(partNumbers.number)
-                }>
-                {partNumbers.number}
-              </InnerBetNumbers>
-            ))}
+            {thirdPart.map((partNumbers) => {
+              const { betTableOrder, color, number } =
+                partNumbers
+
+              return (
+                <InnerBetNumber
+                  key={betTableOrder}
+                  color={color}
+                  number={number}
+                  outerPartNumbers={activeBetNumbers}
+                  onClick={() =>
+                    handleClickBet(number, userBet)
+                  }>
+                  {number}
+                </InnerBetNumber>
+              )
+            })}
           </NumbersBetPart>
         ))}
       </InnerNumbersWrapper>
@@ -141,8 +177,15 @@ const RouletteTable = () => {
         <OuterBlock
           key={nanoid()}
           onClick={() =>
-            handleClickBet(tableItem?.includedNumber)
-          }>
+            handleClickBet(
+              tableItem?.includedNumber,
+              userBet
+            )
+          }
+          onMouseEnter={() =>
+            setActiveBetNumbers(tableItem?.includedNumber)
+          }
+          onMouseLeave={() => setActiveBetNumbers([])}>
           {tableItem.title}
         </OuterBlock>
       ))}
@@ -150,4 +193,4 @@ const RouletteTable = () => {
   )
 }
 
-export default RouletteTable
+export default memo(RouletteTable)
