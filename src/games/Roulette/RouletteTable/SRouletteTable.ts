@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { StyledComponent } from 'styled-components'
 
 export const RouletteTableWrapper = styled.div`
   background: #00b894;
@@ -26,7 +26,7 @@ export const OuterBlock = styled.div`
   font-size: 1.25rem;
   user-select: none;
   cursor: pointer;
-  transition: ease-in-out 0.5s;
+  transition: all 0.3s ease-in-out;
 
   &:hover {
     box-shadow: 0px 0px 10px 2px #ffeaa7 inset;
@@ -91,7 +91,10 @@ export const InnerNumbersWrapper = styled.div`
   grid-auto-flow: column;
 `
 
-export const InnerBetNumbers = styled.div`
+export const InnerBetNumber = styled.div<{
+  outerPartNumbers: number[] | undefined
+  number: number
+}>`
   border: 1px solid #ffbe76;
   color: #f9ca24;
   padding: 1rem;
@@ -103,7 +106,20 @@ export const InnerBetNumbers = styled.div`
   background: ${(props) => props.color};
   user-select: none;
   cursor: pointer;
-  transition: ease-in-out 0.5s;
+  transition: all 0.3s ease-in-out;
+
+  ${(props) => {
+    if (props.outerPartNumbers === undefined) {
+      return
+    }
+
+    if (props.outerPartNumbers.includes(props.number)) {
+      return `
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0px 0px 10px 2px #ffeaa7 inset;
+      `
+    }
+  }}
 
   &:hover {
     box-shadow: 0px 0px 10px 2px #ffeaa7 inset;

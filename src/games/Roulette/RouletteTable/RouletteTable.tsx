@@ -2,11 +2,12 @@ import React, {
   useCallback,
   useMemo,
   useState,
+  memo,
 } from 'react'
 import { nanoid } from 'nanoid'
 import { ROULETTE_NUMBERS } from '../constants'
 import {
-  InnerBetNumbers,
+  InnerBetNumber,
   InnerNumbersWrapper,
   NumbersBetPart,
   OuterBlock,
@@ -24,6 +25,9 @@ const RouletteTable = () => {
   >([])
 
   const [userBet, setUserBet] = useState(100)
+  const [activeBetNumbers, setActiveBetNumbers] = useState<
+    number[] | undefined
+  >([])
 
   const betTableItems = useMemo(
     () => [
@@ -51,14 +55,14 @@ const RouletteTable = () => {
         includedNumber: getIncludedNumbers(12).getNumbers(),
       },
       {
-        title: '2st. 12',
+        title: '2nd. 12',
         includedNumber: getIncludedNumbers(
           12,
           13
         ).getNumbers(),
       },
       {
-        title: '3st. 12',
+        title: '3rd. 12',
         includedNumber: getIncludedNumbers(
           12,
           25
@@ -131,10 +135,10 @@ const RouletteTable = () => {
         ]
       })
     },
-    [bets]
+    []
   )
 
-  console.log(bets)
+  console.log(activeBetNumbers)
 
   return (
     <RouletteTableWrapper>
@@ -149,19 +153,23 @@ const RouletteTable = () => {
           )
         ).map((thirdPart) => (
           <NumbersBetPart key={nanoid()}>
-            {thirdPart.map((partNumbers) => (
-              <InnerBetNumbers
-                key={partNumbers.betTableOrder}
-                color={partNumbers.color}
-                onClick={() =>
-                  handleClickBet(
-                    partNumbers.number,
-                    userBet
-                  )
-                }>
-                {partNumbers.number}
-              </InnerBetNumbers>
-            ))}
+            {thirdPart.map((partNumbers) => {
+              const { betTableOrder, color, number } =
+                partNumbers
+
+              return (
+                <InnerBetNumber
+                  key={betTableOrder}
+                  color={color}
+                  number={number}
+                  outerPartNumbers={activeBetNumbers}
+                  onClick={() =>
+                    handleClickBet(number, userBet)
+                  }>
+                  {number}
+                </InnerBetNumber>
+              )
+            })}
           </NumbersBetPart>
         ))}
       </InnerNumbersWrapper>
@@ -173,7 +181,11 @@ const RouletteTable = () => {
               tableItem?.includedNumber,
               userBet
             )
-          }>
+          }
+          onMouseEnter={() =>
+            setActiveBetNumbers(tableItem?.includedNumber)
+          }
+          onMouseLeave={() => setActiveBetNumbers([])}>
           {tableItem.title}
         </OuterBlock>
       ))}
@@ -181,4 +193,4 @@ const RouletteTable = () => {
   )
 }
 
-export default RouletteTable
+export default memo(RouletteTable)
