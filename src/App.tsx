@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 import { ThemeProvider } from 'styled-components'
-import Roulette from './games/Roulette/Roulette'
+import Roulette from './pages/Roulette/Roulette'
 import { RootStore, store } from './store/RootStore'
 import { theme } from './Theme'
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 
 import RouletteTable from './RouletteTable/RouletteTable'
 import { RouletteWrapper } from './SRoulette'

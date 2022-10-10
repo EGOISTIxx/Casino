@@ -1,6 +1,6 @@
 export const getIncludedNumbers = (
-  length: number = 1,
-  initialNumber: number = 1
+  length = 1,
+  initialNumber = 1
 ) => {
   return {
     getNumbers() {
