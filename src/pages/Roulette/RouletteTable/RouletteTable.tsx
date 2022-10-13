@@ -14,7 +14,7 @@ import {
 import { getIncludedNumbers } from '../../../helpers/Roulette/getIncludedNumber'
 import { getNumbersByColor } from '../../../helpers/Roulette/getNumbersByColor'
 import { useOrderRoulette } from '../../../hooks/useOrderRoulette'
-import { debounce } from 'lodash'
+import { TRouletteNumbers } from '../../../types/Roulette'
 
 export type TTableItems = {
   title: string
@@ -148,19 +148,17 @@ const RouletteTable = () => {
 
   const handleAddActiveBetNumbers = useCallback(
     (tableItem: TTableItems) => {
-      console.log('add')
       setActiveBetNumbers(tableItem.includedNumber)
     },
     [activeBetNumbers]
   )
 
   const handleRemoveActiveBetNumbers = useCallback(() => {
-    console.log('remove')
     if (!activeBetNumbers?.length) return
     setActiveBetNumbers([])
   }, [activeBetNumbers])
 
-  console.log(activeBetNumbers)
+  // console.log(activeBetNumbers)
 
   return (
     <RouletteTableWrapper>
@@ -169,25 +167,27 @@ const RouletteTable = () => {
         0
       </OuterBlock>
       <InnerNumbersWrapper>
-        {tableNumbers.map((thirdPart) => (
+        {tableNumbers.map((thirdPart: any) => (
           <NumbersBetPart key={nanoid()}>
-            {thirdPart.map((partNumbers) => {
-              const { betTableOrder, color, number } =
-                partNumbers
+            {thirdPart.map(
+              (partNumbers: TRouletteNumbers) => {
+                const { betTableOrder, color, number } =
+                  partNumbers
 
-              return (
-                <InnerBetNumber
-                  key={betTableOrder}
-                  color={color}
-                  number={number}
-                  outerPartNumbers={activeBetNumbers}
-                  onClick={() =>
-                    handleClickBet(number, userBet)
-                  }>
-                  {number}
-                </InnerBetNumber>
-              )
-            })}
+                return (
+                  <InnerBetNumber
+                    key={betTableOrder}
+                    color={color}
+                    number={number}
+                    outerPartNumbers={activeBetNumbers}
+                    onClick={() =>
+                      handleClickBet(number, userBet)
+                    }>
+                    {number}
+                  </InnerBetNumber>
+                )
+              }
+            )}
           </NumbersBetPart>
         ))}
       </InnerNumbersWrapper>

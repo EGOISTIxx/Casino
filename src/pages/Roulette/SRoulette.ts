@@ -4,7 +4,7 @@ export const RouletteWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  /* flex-direction: column; */
   padding: 0 1.5rem 0;
 
   & > :first-child {

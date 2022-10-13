@@ -13,7 +13,10 @@ export const useOrderRoulette = (type: TSortNumber) => {
           )
         )
       case 'wheel':
-        return ROULETTE_NUMBERS
+        return ROULETTE_NUMBERS.flat().sort(
+          (a, b) => a.wheelOrder - b.wheelOrder
+        )
+
       default:
         return ROULETTE_NUMBERS
     }
