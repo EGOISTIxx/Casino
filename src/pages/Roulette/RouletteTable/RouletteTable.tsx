@@ -158,8 +158,6 @@ const RouletteTable = () => {
     setActiveBetNumbers([])
   }, [activeBetNumbers])
 
-  // console.log(activeBetNumbers)
-
   return (
     <RouletteTableWrapper>
       <OuterBlock
