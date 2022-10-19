@@ -36,7 +36,7 @@ const RouletteSpin = () => {
 
   return (
     <>
-      <RouletteSpinWrapper>
+      {/* <RouletteSpinWrapper>
         {wheelNumbersWithZero.map((wheelNumber, index) => {
           const { color, number } = wheelNumber
 
@@ -66,19 +66,18 @@ const RouletteSpin = () => {
               )
 
               return (
-                <>
-                  <InnerCircleBlock
-                    color={color}
-                    angle={angle}
-                    width={width + 3}
-                  />
-                </>
+                <InnerCircleBlock
+                  key={nanoid()}
+                  color={color}
+                  angle={angle}
+                  width={width + 3}
+                />
               )
             }
           )}
         </InnerCircle>
-      </RouletteSpinWrapper>
-      <Button>Старт</Button>
+      </RouletteSpinWrapper> */}
+      <Button type='primary'>Старт</Button>
     </>
   )
 }

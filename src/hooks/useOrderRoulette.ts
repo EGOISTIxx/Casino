@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { ROULETTE_NUMBERS } from '../pages/Roulette/constants'
 
 type TSortNumber = 'table' | 'wheel'

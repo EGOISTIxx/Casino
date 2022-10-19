@@ -1,10 +1,27 @@
-import styled from 'styled-components'
+import styled, { keyframes, css } from 'styled-components'
+
+type TSpinProps = {
+  color: string
+  angle: number
+  width: number
+}
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 export const RouletteSpinWrapper = styled.div`
   position: relative;
   width: 400px;
   height: 400px;
   margin: 1rem;
+  animation: ${rotate} 20s linear infinite;
 
   &::before {
     content: '';
@@ -13,7 +30,7 @@ export const RouletteSpinWrapper = styled.div`
     width: 300px;
     height: 300px;
     position: absolute;
-    left: 54%;
+    left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     border-radius: 50%;
@@ -21,13 +38,9 @@ export const RouletteSpinWrapper = styled.div`
   }
 `
 
-export const StyledDiv = styled.div<{
-  color: string
-  angle: number
-  width: number
-}>`
+export const StyledDiv = styled.div<TSpinProps>`
   text-align: center;
-  left: 50%;
+  left: 46%;
   transform-origin: 50% 100%;
   position: absolute;
   width: ${(props) => props.width}px;
@@ -47,6 +60,8 @@ export const StyledDiv = styled.div<{
         ${(props) => props.color} 50%
       )
       right / 50% 100% no-repeat;
+
+     
 `
 
 export const InnerCircle = styled.div`
@@ -57,7 +72,7 @@ export const InnerCircle = styled.div`
   position: relative;
   border-radius: 50%;
   overflow: hidden;
-  left: 54%;
+  left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
 
@@ -75,12 +90,9 @@ export const InnerCircle = styled.div`
   }
 `
 
-export const InnerCircleBlock = styled.div<{
-  color: string
-  angle: number
-  width: number
-}>`
-  left: 30%;
+export const InnerCircleBlock = styled.div<TSpinProps>`
+  left: 29%;
+  top: -4%;
   position: absolute;
   width: ${(props) => props.width}px;
   height: 75px;
