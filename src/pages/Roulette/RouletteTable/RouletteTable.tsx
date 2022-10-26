@@ -2,10 +2,8 @@ import React, {
   useCallback,
   useMemo,
   useState,
-  memo,
 } from 'react'
 import { nanoid } from 'nanoid'
-import { ROULETTE_NUMBERS } from '../constants'
 import {
   InnerBetNumber,
   InnerNumbersWrapper,
@@ -15,8 +13,17 @@ import {
 } from './SRouletteTable'
 import { getIncludedNumbers } from '../../../helpers/Roulette/getIncludedNumber'
 import { getNumbersByColor } from '../../../helpers/Roulette/getNumbersByColor'
+import { useOrderRoulette } from '../../../hooks/useOrderRoulette'
+import { TRouletteNumbers } from '../../../types/Roulette'
+
+export type TTableItems = {
+  title: string
+  includedNumber?: number[] | undefined
+}
 
 const RouletteTable = () => {
+  const tableNumbers = useOrderRoulette('table')
+
   const [bets, setBets] = useState<
     {
       betNumber: number | number[] | undefined
@@ -25,11 +32,12 @@ const RouletteTable = () => {
   >([])
 
   const [userBet, setUserBet] = useState(100)
+
   const [activeBetNumbers, setActiveBetNumbers] = useState<
     number[] | undefined
   >([])
 
-  const betTableItems = useMemo(
+  const betTableItems: TTableItems[] = useMemo(
     () => [
       {
         title: '2 to 1',
@@ -138,7 +146,17 @@ const RouletteTable = () => {
     []
   )
 
-  console.log(activeBetNumbers)
+  const handleAddActiveBetNumbers = useCallback(
+    (tableItem: TTableItems) => {
+      setActiveBetNumbers(tableItem.includedNumber)
+    },
+    [activeBetNumbers]
+  )
+
+  const handleRemoveActiveBetNumbers = useCallback(() => {
+    if (!activeBetNumbers?.length) return
+    setActiveBetNumbers([])
+  }, [activeBetNumbers])
 
   return (
     <RouletteTableWrapper>
@@ -147,29 +165,27 @@ const RouletteTable = () => {
         0
       </OuterBlock>
       <InnerNumbersWrapper>
-        {ROULETTE_NUMBERS.map((thirdPart) =>
-          thirdPart.sort(
-            (a, b) => a.betTableOrder - b.betTableOrder
-          )
-        ).map((thirdPart) => (
+        {tableNumbers.map((thirdPart: any) => (
           <NumbersBetPart key={nanoid()}>
-            {thirdPart.map((partNumbers) => {
-              const { betTableOrder, color, number } =
-                partNumbers
+            {thirdPart.map(
+              (partNumbers: TRouletteNumbers) => {
+                const { betTableOrder, color, number } =
+                  partNumbers
 
-              return (
-                <InnerBetNumber
-                  key={betTableOrder}
-                  color={color}
-                  number={number}
-                  outerPartNumbers={activeBetNumbers}
-                  onClick={() =>
-                    handleClickBet(number, userBet)
-                  }>
-                  {number}
-                </InnerBetNumber>
-              )
-            })}
+                return (
+                  <InnerBetNumber
+                    key={betTableOrder}
+                    color={color}
+                    number={number}
+                    outerPartNumbers={activeBetNumbers}
+                    onClick={() =>
+                      handleClickBet(number, userBet)
+                    }>
+                    {number}
+                  </InnerBetNumber>
+                )
+              }
+            )}
           </NumbersBetPart>
         ))}
       </InnerNumbersWrapper>
@@ -183,9 +199,9 @@ const RouletteTable = () => {
             )
           }
           onMouseEnter={() =>
-            setActiveBetNumbers(tableItem?.includedNumber)
+            handleAddActiveBetNumbers(tableItem)
           }
-          onMouseLeave={() => setActiveBetNumbers([])}>
+          onMouseLeave={handleRemoveActiveBetNumbers}>
           {tableItem.title}
         </OuterBlock>
       ))}
@@ -193,4 +209,4 @@ const RouletteTable = () => {
   )
 }
 
-export default memo(RouletteTable)
+export default RouletteTable

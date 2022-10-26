@@ -1,7 +1,11 @@
-import { ROULETTE_NUMBERS } from '../../games/Roulette/constants'
+import {
+  ROULETTE_NUMBERS,
+  BLACK_COLOR,
+  RED_COLOR,
+} from '../../pages/Roulette/constants'
 
 export const getNumbersByColor = (
-  color: '#FF0000' | '#000000'
+  color: typeof RED_COLOR | typeof BLACK_COLOR
 ) => {
   return ROULETTE_NUMBERS.map((numbersPart) =>
     numbersPart
