@@ -1,5 +1,7 @@
 import { useMemo } from 'react'
+import { WheelDataType } from '../components/Wheel'
 import { ROULETTE_NUMBERS } from '../pages/Roulette/constants'
+import { TRouletteNumbers } from '../types/Roulette'
 
 type TSortNumber = 'table' | 'wheel'
 
@@ -13,10 +15,14 @@ export const useOrderRoulette = (type: TSortNumber) => {
           )
         )
       case 'wheel':
-        return ROULETTE_NUMBERS.flat().sort(
-          (a, b) => a.wheelOrder - b.wheelOrder
-        )
-
+        return ROULETTE_NUMBERS.flat()
+          .sort((a, b) => a.wheelOrder - b.wheelOrder)
+          .map((objNumber) => ({
+            option: objNumber.number,
+            style: {
+              backgroundColor: objNumber.color,
+            },
+          }))
       default:
         return ROULETTE_NUMBERS
     }
