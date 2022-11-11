@@ -15,6 +15,8 @@ import { getIncludedNumbers } from '../../../helpers/Roulette/getIncludedNumber'
 import { getNumbersByColor } from '../../../helpers/Roulette/getNumbersByColor'
 import { useOrderRoulette } from '../../../hooks/useOrderRoulette'
 import { TRouletteNumbers } from '../../../types/Roulette'
+import { BetGrid } from './components'
+import { debounce } from 'lodash'
 
 export type TTableItems = {
   title: string
@@ -146,22 +148,26 @@ const RouletteTable = () => {
     []
   )
 
-  const handleAddActiveBetNumbers = useCallback(
-    (tableItem: TTableItems) => {
-      setActiveBetNumbers(tableItem.includedNumber)
-    },
-    [activeBetNumbers]
-  )
+  const handleAddActiveBetNumbers =
+    (includedNumbers: number[]) => {
+      setActiveBetNumbers(includedNumbers)
+    }
+
+  const throttledHandleAddActiveBetNumbers = useMemo(() => debounce(
+    handleAddActiveBetNumbers,
+    1500
+  ), [])
 
   const handleRemoveActiveBetNumbers = useCallback(() => {
+    throttledHandleAddActiveBetNumbers.cancel()
     if (!activeBetNumbers?.length) return
     setActiveBetNumbers([])
-  }, [activeBetNumbers])
+  }, [activeBetNumbers, throttledHandleAddActiveBetNumbers])
 
   return (
     <RouletteTableWrapper>
       <OuterBlock
-        onClick={() => handleClickBet(0, userBet)}>
+        onClick={() => handleClickBet(0, userBet)} number={0} activeBetNumbers={activeBetNumbers}>
         0
       </OuterBlock>
       <InnerNumbersWrapper>
@@ -188,6 +194,12 @@ const RouletteTable = () => {
             )}
           </NumbersBetPart>
         ))}
+        <BetGrid
+          onMouseEnter={throttledHandleAddActiveBetNumbers}
+          onMouseLeave={handleRemoveActiveBetNumbers}
+          onClick={handleClickBet}
+          bet={userBet}
+        />
       </InnerNumbersWrapper>
       {betTableItems.map((tableItem) => (
         <OuterBlock
@@ -199,7 +211,9 @@ const RouletteTable = () => {
             )
           }
           onMouseEnter={() =>
-            handleAddActiveBetNumbers(tableItem)
+            throttledHandleAddActiveBetNumbers(
+              tableItem.includedNumber || []
+            )
           }
           onMouseLeave={handleRemoveActiveBetNumbers}>
           {tableItem.title}

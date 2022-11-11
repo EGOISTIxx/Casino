@@ -1,4 +1,4 @@
-import styled, { StyledComponent } from 'styled-components'
+import styled from 'styled-components'
 
 export const RouletteTableWrapper = styled.div`
   background: #00b894;
@@ -13,9 +13,13 @@ export const RouletteTableWrapper = styled.div`
     '. . . . . . . . . . . . . .'
     '. . . . . . . . . . . . . .'
     '. . . . . . . . . . . . . .';
+  position: relative;
 `
 
-export const OuterBlock = styled.div`
+export const OuterBlock = styled.div<{
+  number?: number
+  activeBetNumbers?: number[]
+}>`
   color: #ffffff;
   padding: 1rem;
   border: 1px solid #ffeaa7;
@@ -27,6 +31,19 @@ export const OuterBlock = styled.div`
   user-select: none;
   cursor: pointer;
   transition: all 0.3s ease-in-out;
+
+  ${(props) => {
+    if (props.activeBetNumbers === undefined) return
+
+    if (props.number === undefined) return
+
+    if (props.activeBetNumbers.includes(props.number)) {
+      return `
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0px 0px 10px 2px #ffeaa7 inset;
+      `
+    }
+  }}
 
   &:hover {
     box-shadow: 0px 0px 10px 2px #ffeaa7 inset;
@@ -89,6 +106,7 @@ export const InnerNumbersWrapper = styled.div`
   grid-row: 1 / 4;
   grid-column: 2 / 14;
   grid-auto-flow: column;
+  position: relative;
 `
 
 export const InnerBetNumber = styled.div<{
@@ -135,4 +153,14 @@ export const NumbersBetPart = styled.div`
   &:last-child {
     border: none;
   }
+`
+
+export const SHiddenBetBlock = styled.div<{
+  leftPosition: number
+  topPosition: number
+}>`
+  position: absolute;
+  left: calc(${(props) => props.leftPosition}px - 10px);
+  top: calc(${(props) => props.topPosition}px - 10px);
+  padding: 10px;
 `
