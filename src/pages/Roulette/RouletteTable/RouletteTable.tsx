@@ -148,26 +148,29 @@ const RouletteTable = () => {
     []
   )
 
-  const handleAddActiveBetNumbers =
-    (includedNumbers: number[]) => {
-      setActiveBetNumbers(includedNumbers)
-    }
+  const handleAddActiveBetNumbers = (
+    includedNumbers: number[]
+  ) => {
+    setActiveBetNumbers(includedNumbers)
+  }
 
-  const throttledHandleAddActiveBetNumbers = useMemo(() => debounce(
-    handleAddActiveBetNumbers,
-    1500
-  ), [])
+  const debouncedHandleAddActiveBetNumbers = useMemo(
+    () => debounce(handleAddActiveBetNumbers, 1500),
+    []
+  )
 
   const handleRemoveActiveBetNumbers = useCallback(() => {
-    throttledHandleAddActiveBetNumbers.cancel()
+    debouncedHandleAddActiveBetNumbers.cancel()
     if (!activeBetNumbers?.length) return
     setActiveBetNumbers([])
-  }, [activeBetNumbers, throttledHandleAddActiveBetNumbers])
+  }, [activeBetNumbers, debouncedHandleAddActiveBetNumbers])
 
   return (
     <RouletteTableWrapper>
       <OuterBlock
-        onClick={() => handleClickBet(0, userBet)} number={0} activeBetNumbers={activeBetNumbers}>
+        onClick={() => handleClickBet(0, userBet)}
+        number={0}
+        activeBetNumbers={activeBetNumbers}>
         0
       </OuterBlock>
       <InnerNumbersWrapper>
@@ -195,7 +198,7 @@ const RouletteTable = () => {
           </NumbersBetPart>
         ))}
         <BetGrid
-          onMouseEnter={throttledHandleAddActiveBetNumbers}
+          onMouseEnter={debouncedHandleAddActiveBetNumbers}
           onMouseLeave={handleRemoveActiveBetNumbers}
           onClick={handleClickBet}
           bet={userBet}
@@ -211,7 +214,7 @@ const RouletteTable = () => {
             )
           }
           onMouseEnter={() =>
-            throttledHandleAddActiveBetNumbers(
+            debouncedHandleAddActiveBetNumbers(
               tableItem.includedNumber || []
             )
           }
