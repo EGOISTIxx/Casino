@@ -1,7 +1,5 @@
 import { useMemo } from 'react'
-import { WheelDataType } from '../components/Wheel'
 import { ROULETTE_NUMBERS } from '../pages/Roulette/constants'
-import { TRouletteNumbers } from '../types/Roulette'
 
 type TSortNumber = 'table' | 'wheel'
 

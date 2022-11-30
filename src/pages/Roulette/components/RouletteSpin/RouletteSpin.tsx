@@ -1,16 +1,9 @@
-import React, {
-  useCallback,
-  useMemo,
-  useState,
-} from 'react'
-import { useOrderRoulette } from '../../../hooks/useOrderRoulette'
+import React, { useContext } from 'react'
 import { RouletteSpinWrapper } from './SRouletteSpin'
-import { BLACK_COLOR, RED_COLOR } from '../constants'
-import { Button } from '../../../components/UI/Button/Button'
-import {
-  Wheel,
-  WheelDataType,
-} from '../../../components/Wheel'
+import { BLACK_COLOR, RED_COLOR } from '../../constants'
+import { Button } from '../../../../components/UI/Button/Button'
+import { Wheel } from '../../../../components/Wheel'
+import { RouletteContext } from '../../context/RouletteContext'
 
 export type TWheelNumbers = {
   number: number
@@ -29,41 +22,17 @@ const radiusLineWidth = 2
 const radiusLineColor = '#feca57'
 
 const RouletteSpin = () => {
-  const numbers = useOrderRoulette('wheel')
+  const context = useContext(RouletteContext)
 
-  const [isSpin, setIsSpin] = useState(false)
-  const [prizeNumber, setPrizeNumber] = useState(0)
+  if (!context) return <div>Получение контекста</div>
 
-  const wheelNumbersWithZero = useMemo<
-    | {
-        option: number
-        style: { backgroundColor: string }
-      }[]
-    | any
-  >(
-    () => [
-      {
-        option: 0,
-        style: {
-          backgroundColor: '#00B894',
-        },
-      },
-      ...numbers,
-    ],
-    []
-  )
-
-  const handleClickSpin = useCallback(() => {
-    const newPrizeNumber = Math.floor(
-      Math.random() * wheelNumbersWithZero.length
-    )
-    setPrizeNumber(newPrizeNumber)
-    setIsSpin(true)
-  }, [wheelNumbersWithZero])
-
-  const stopSpinnig = useCallback(() => {
-    setIsSpin(false)
-  }, [isSpin])
+  const { 
+    handleClickSpin,
+    isSpin,
+    prizeNumber,
+    stopSpinnig,
+    wheelNumbersWithZero,
+  } = context
 
   return (
     <>

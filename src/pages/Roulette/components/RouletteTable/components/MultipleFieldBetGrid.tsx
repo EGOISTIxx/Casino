@@ -7,7 +7,7 @@ const MultipleFieldBetGrid = (props: {
   onMouseEnter: (includedNumbers: number[]) => void
   onMouseLeave: () => void
   onClick: (
-    number: number | number[] | undefined,
+    number: number[] | undefined,
     bet: number
   ) => void
   bet: number
