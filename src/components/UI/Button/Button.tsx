@@ -1,5 +1,5 @@
 import { ButtonProps } from 'antd'
-import React, { PropsWithChildren, ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 import { StyledButton } from './SButton'
 
 export interface IButtonProps extends ButtonProps {

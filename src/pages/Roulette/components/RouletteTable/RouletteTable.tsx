@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  useContext,
   useMemo,
   useState,
 } from 'react'
@@ -11,12 +12,17 @@ import {
   OuterBlock,
   RouletteTableWrapper,
 } from './SRouletteTable'
-import { getIncludedNumbers } from '../../../helpers/Roulette/getIncludedNumber'
-import { getNumbersByColor } from '../../../helpers/Roulette/getNumbersByColor'
-import { useOrderRoulette } from '../../../hooks/useOrderRoulette'
-import { TRouletteNumbers } from '../../../types/Roulette'
+import { getIncludedNumbers } from '../../../../helpers/Roulette/getIncludedNumber'
+import { getNumbersByColor } from '../../../../helpers/Roulette/getNumbersByColor'
+import { useOrderRoulette } from '../../../../hooks/useOrderRoulette'
+import { TRouletteNumbers } from '../../../../types/Roulette'
 import { BetGrid } from './components'
-import { debounce } from 'lodash'
+import { debounce, isNumber } from 'lodash'
+import {
+  RouletteContext,
+  IRouletteContextValue,
+  TBetNumber,
+} from '../../context/RouletteContext'
 
 export type TTableItems = {
   title: string
@@ -24,14 +30,11 @@ export type TTableItems = {
 }
 
 const RouletteTable = () => {
-  const tableNumbers = useOrderRoulette('table')
+  const { setBets, bets } = useContext(
+    RouletteContext
+  ) as IRouletteContextValue
 
-  const [bets, setBets] = useState<
-    {
-      betNumber: number | number[] | undefined
-      currentBet: number
-    }[]
-  >([])
+  const tableNumbers = useOrderRoulette('table')
 
   const [userBet, setUserBet] = useState(100)
 
@@ -119,14 +122,12 @@ const RouletteTable = () => {
   )
 
   const handleClickBet = useCallback(
-    (
-      number: number | number[] | undefined,
-      bet: number
-    ) => {
+    (number: TBetNumber, bet: number) => {
       setBets((prevValue) => {
         if (
           prevValue.some(
-            (elem) => elem.betNumber === number
+            ({ betNumber }) =>
+              betNumber && betNumber === number
           )
         ) {
           return prevValue.map((elem) =>
@@ -141,7 +142,10 @@ const RouletteTable = () => {
 
         return [
           ...prevValue,
-          { betNumber: number, currentBet: bet },
+          {
+            betNumber: number,
+            currentBet: bet,
+          },
         ]
       })
     },
@@ -168,33 +172,34 @@ const RouletteTable = () => {
   return (
     <RouletteTableWrapper>
       <OuterBlock
-        onClick={() => handleClickBet(0, userBet)}
+        onClick={() => handleClickBet([0], userBet)}
         number={0}
         activeBetNumbers={activeBetNumbers}>
         0
       </OuterBlock>
       <InnerNumbersWrapper>
-        {tableNumbers.map((thirdPart: any) => (
+        {tableNumbers.map((thirdPart) => (
           <NumbersBetPart key={nanoid()}>
-            {thirdPart.map(
-              (partNumbers: TRouletteNumbers) => {
-                const { betTableOrder, color, number } =
-                  partNumbers
+            {Array.isArray(thirdPart) &&
+              thirdPart.map(
+                (partNumbers: TRouletteNumbers) => {
+                  const { betTableOrder, color, number } =
+                    partNumbers
 
-                return (
-                  <InnerBetNumber
-                    key={betTableOrder}
-                    color={color}
-                    number={number}
-                    outerPartNumbers={activeBetNumbers}
-                    onClick={() =>
-                      handleClickBet(number, userBet)
-                    }>
-                    {number}
-                  </InnerBetNumber>
-                )
-              }
-            )}
+                  return (
+                    <InnerBetNumber
+                      key={betTableOrder}
+                      color={color}
+                      number={number}
+                      outerPartNumbers={activeBetNumbers}
+                      onClick={() =>
+                        handleClickBet([number], userBet)
+                      }>
+                      {number}
+                    </InnerBetNumber>
+                  )
+                }
+              )}
           </NumbersBetPart>
         ))}
         <BetGrid
@@ -204,22 +209,22 @@ const RouletteTable = () => {
           bet={userBet}
         />
       </InnerNumbersWrapper>
-      {betTableItems.map((tableItem) => (
+      {betTableItems.map(({ includedNumber, title }) => (
         <OuterBlock
           key={nanoid()}
           onClick={() =>
             handleClickBet(
-              tableItem?.includedNumber,
+              includedNumber && includedNumber,
               userBet
             )
           }
           onMouseEnter={() =>
             debouncedHandleAddActiveBetNumbers(
-              tableItem.includedNumber || []
+              includedNumber || []
             )
           }
           onMouseLeave={handleRemoveActiveBetNumbers}>
-          {tableItem.title}
+          {title}
         </OuterBlock>
       ))}
     </RouletteTableWrapper>
